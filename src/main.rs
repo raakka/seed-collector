@@ -56,14 +56,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // Making an https client
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
-
+    
+    let mut counter += 1;
     loop{
         // this is like a c count do I have to explain :/
         counter += 1;
 
         // the goal is to not get banned so we ping every 100 clicks
-        if count == 100 {
-            count = 0
+        if counter == 100 {
+            counter = 0;
 
             // Sending req to get the shape seed
             let resp = client
