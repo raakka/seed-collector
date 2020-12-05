@@ -1,23 +1,3 @@
-// This is where we set up the config to match the struct in the mod
-mod config {
-    pub use ::config::ConfigErr;
-    use serde::Deserialize;
-
-    // This struct we copy into
-    #[derive(Deserialize)]
-    pub struct Config {
-        pub shape_site_url: hyper::Uri,
-    }
-
-    impl Config {
-        pub fn from_env() -> Result<Self, ConfigErr> {
-            let mut conf = ::config::Config::new();
-            conf.merge(::config::Environment::new())?;
-            conf.try_into();
-        }
-    }
-}
-
 use std::{ 
     error::Error,
     env
@@ -44,20 +24,20 @@ use serde_json::{
 
 use hyper_tls::HttpsConnector;
 use tokio;
+use dotenv::dotenv;
 
 // Here's where the magic happens...
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+async fn main() -> Result<()/*, Box<dyn std::error::Error + Send + Sync>*/> {
     //  why do you have the habit of checking dotfiles for no reason???
     dotenv().ok();
-    let cfg = crate::config::Config::from_env().unwrap();
-    
     
     // Making an https client
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
-    
-    let mut counter += 1;
+    let target_uri: hyper::Uri = env::var("shape_site_url").parse()?;  
+        
+    let mut counter: u8 = 0;
     loop{
         // this is like a c count do I have to explain :/
         counter += 1;
@@ -68,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
             // Sending req to get the shape seed
             let resp = client
-                .get(cfg.shape_site_url.clone())
+                .get(target_uri.clone())
                 .await?;
 
             println!("{:?}", resp)
