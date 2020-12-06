@@ -11,6 +11,8 @@ I have yet to test other sites at the moment and pull requests are very much ope
 **2. Run** `cargo run --release`
 
 ## Output
+
+### Files
 When you run the program it should make a JSON file `json-seed/greenhouse.json`\
 It should also save each script in a vanilla format in a folder called `/seed-output`
 
