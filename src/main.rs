@@ -45,8 +45,13 @@ async fn main() -> std::result::Result<
         // this is like a c count do I have to explain :/
         counter += 1;
 
-        // the goal is to not get banned so we ping every 100 clicks
-        if counter == 100 {
+        if counter != 254 {
+            continue;
+        }
+
+        // the goal is to not get banned so we ping every 254 clicks
+        // also I'm too lazy to change this from u8 to something else lol
+        if counter == 254 {
             counter = 0;
 
             // Sending req to get the shape seed
@@ -54,7 +59,16 @@ async fn main() -> std::result::Result<
                 .get(target_uri.clone())
                 .await?;
 
-            println!("{:?}", resp)
+            // since we need to convert the body from stream -> str
+            let byte_bod = body::to_bytes(resp.into_body()).await?;
+            let body = String::from_utf8(byte_bod.to_vec())
+                .expect("resp body not utf8");
+
+            // JSON body
+            // let json_body: Value = serde_json::from_str(&body)?;
+            // we don't need this beause the body is JS not JSON stupid...
+
+            println!("{:?}", body)
         }
     }
 } 
