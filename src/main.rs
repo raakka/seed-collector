@@ -1,6 +1,8 @@
 use std::{ 
     error::Error,
-    env
+    env,
+    fs,
+    path::Path
 };
 
 use hyper::{
@@ -26,14 +28,55 @@ use hyper_tls::HttpsConnector;
 use tokio;
 use dotenv::dotenv;
 
+// Seed json object 
+#[derive(Serialize, Deserialize)]
+struct Seedobj {
+    seed: String,
+    v: String,
+    i: String,
+}
+
 #[tokio::main]
 async fn main() -> std::result::Result<
-    (), // this kinda hard to read mb
+    (), /* this kinda hard to read mb */
     Box<dyn std::error::Error + Send + Sync>
     > {
+
     //  why do you have the habit of checking dotfiles for no reason???
     dotenv().ok();
     
+    // TODO(XVI): Make this a mod this is a mess
+    ////////////////////// 
+    //  FILE HANDLING   //
+    //////////////////////
+
+    // Checking if we have our JSON output file made...
+    let json_seed_file = fs::File::open("seed-json/greenhouse.json");
+    let _ = match json_seed_file {
+        Ok(file) => file,
+        Err(err) => match err.kind() {
+            std::io::ErrorKind::NotFound => match fs::File::create("seed-json/greenhouse.json") {
+                Ok(fc) => fc,
+                Err(e) => panic!("Could not create greenhouse.json: {:?}", e),
+                _ => panic!("Other error creating greenhouse.json!"),
+            },
+            _ => panic!("Error I don't know how to handle"),
+        },
+    };
+    
+    // Does it read?
+    let json_seed = fs::read_to_string("seed-json/greenhouse.json")
+        .expect("Can't read greenhouse.json");
+
+    let mut shape_seeds: Vec<Seedobj> = Vec::new();
+    if fs::metadata("seed-json/greenhouse.json").unwrap().len() != 0 {
+        shape_seeds = serde_json::from_str(&json_seed)?;
+    }
+
+    /////////////////////
+    //END FILE HANDLING//
+    /////////////////////
+
     // Making an https client
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
