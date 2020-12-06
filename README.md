@@ -7,7 +7,8 @@ The example here is target
 ## Getting Started
 This should be *plugNplay* for target but of course you can modify the script endpoint and it should play nice
 I have yet to test other sites at the moment and pull requests are very much open
-**1. Clone the repo** `https://github.com/raakka/seed-collector && cd seed-collector`
+
+**1. Clone the repo** `https://github.com/raakka/seed-collector && cd seed-collector`\
 **2. Run** `cargo run --release`
 
 ## Output
