@@ -122,14 +122,22 @@ async fn main() -> std::result::Result<
                 v: found_values[3].to_string(),
                 i: found_values[5].to_string()
             };
-
-            //pushing our new object to this array
-            shape_seeds.push(this_seed);
             
-            let njson_seeds: String = serde_json::to_string(&shape_seeds)?;
-            fs::write("seed-json/greenhouse.json", &njson_seeds)
-                .expect("Failed to write to file!");
-
+            // okay okay I know this looks like garbage but whatever
+            // this checks to see if we have the same seed in our json
+            for seed in shape_seeds.into_iter() {
+                if seed.seed == this_seed.seed {
+                    continue;
+                } else {
+                    //  pushing our new object to this array
+                    shape_seeds.push(this_seed);
+            
+                    // save to json
+                    let njson_seeds: String = serde_json::to_string(&shape_seeds)?;
+                    fs::write("seed-json/greenhouse.json", &njson_seeds)
+                        .expect("Failed to write to file!");
+                }
+            }
             // JSON body
             // let json_body: Value = serde_json::from_str(&body)?;
             // we don't need this beause the body is JS not JSON stupid...
