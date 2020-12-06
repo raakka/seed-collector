@@ -45,11 +45,10 @@ async fn main() -> std::result::Result<
     //  why do you have the habit of checking dotfiles for no reason???
     dotenv().ok();
     
-    // TODO(XVI): Make this a mod this is a mess
-    ////////////////////// 
-    //  FILE HANDLING   //
-    //////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// FILE HANDLING 
 
+    // TODO(XVI): Make this a mod this is a mess
     // Checking if we have our JSON output file made...
     let json_seed_file = fs::File::open("seed-json/greenhouse.json");
     let _ = match json_seed_file {
@@ -72,10 +71,10 @@ async fn main() -> std::result::Result<
     if fs::metadata("seed-json/greenhouse.json").unwrap().len() != 0 {
         shape_seeds = serde_json::from_str(&json_seed)?;
     }
+    // OKAY! After all that we can now shape_seeds.push(<Seedobj>)
 
-    /////////////////////
-    //END FILE HANDLING//
-    /////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// REQUESTS !
 
     // Making an https client
     let https = HttpsConnector::new();
@@ -83,6 +82,7 @@ async fn main() -> std::result::Result<
     // let target_uri: hyper::Uri = env::var("shape_site_url").unwrap().parse()?;  
     let target_uri: hyper::Uri = "https://assets.targetimg1.com/ssx/ssx.mod.js".parse()?;
         
+    // Monitor Loop
     let mut counter: u8 = 0;
     loop{
         // this is like a c count do I have to explain :/
@@ -106,6 +106,8 @@ async fn main() -> std::result::Result<
             let byte_bod = body::to_bytes(resp.into_body()).await?;
             let body = String::from_utf8(byte_bod.to_vec())
                 .expect("resp body not utf8");
+            
+            // Parsing body for our Json values
 
             // JSON body
             // let json_body: Value = serde_json::from_str(&body)?;
