@@ -64,12 +64,12 @@ async fn main() -> std::result::Result<
     };
     
     // Does it read?
-    let json_seed = fs::read_to_string("seed-json/greenhouse.json")
+    let mut seed_data = fs::read_to_string("seed-json/greenhouse.json")
         .expect("Can't read greenhouse.json");
 
     let mut shape_seeds: Vec<Seedobj> = Vec::new();
     if fs::metadata("seed-json/greenhouse.json").unwrap().len() != 0 {
-        shape_seeds = serde_json::from_str(&json_seed)?;
+        shape_seeds = serde_json::from_str(&seed_data)?;
     }
     // OKAY! After all that we can now shape_seeds.push(<Seedobj>)
 
@@ -96,6 +96,13 @@ async fn main() -> std::result::Result<
         // also I'm too lazy to change this from u8 to something else lol
         if counter == 254 {
             counter = 0;
+            
+            // update the file from the last read
+            seed_data = fs::read_to_string("seed-json/greenhouse.json")
+                .expect("Can't read greenhouse.json");
+            if fs::metadata("seed-json/greenhouse.json").unwrap().len() != 0 {
+                shape_seeds = serde_json::from_str(&seed_data)?;
+            }
 
             // Sending req to get the shape seed
             let resp = client
@@ -108,6 +115,20 @@ async fn main() -> std::result::Result<
                 .expect("resp body not utf8");
             
             // Parsing body for our Json values
+            let found_values: Vec<_> = body.split('"').collect();
+            
+            let this_seed = Seedobj {
+                seed: found_values[1].to_string(),
+                v: found_values[3].to_string(),
+                i: found_values[5].to_string()
+            };
+
+            //pushing our new object to this array
+            shape_seeds.push(this_seed);
+            
+            let njson_seeds: String = serde_json::to_string(&shape_seeds)?;
+            fs::write("seed-json/greenhouse.json", &njson_seeds)
+                .expect("Failed to write to file!");
 
             // JSON body
             // let json_body: Value = serde_json::from_str(&body)?;
