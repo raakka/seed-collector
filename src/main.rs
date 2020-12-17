@@ -29,12 +29,14 @@ use tokio;
 use dotenv::dotenv;
 
 // Seed json object 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Seedobj {
     seed: String,
     v: String,
     i: String,
 }
+
+//TODO(XVI): Declare all variables here because it makes code much cleaner 
 
 #[tokio::main]
 async fn main() -> std::result::Result<
@@ -45,6 +47,7 @@ async fn main() -> std::result::Result<
     //  why do you have the habit of checking dotfiles for no reason???
     dotenv().ok();
     
+///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // FILE HANDLING 
 
@@ -73,6 +76,7 @@ async fn main() -> std::result::Result<
     }
     // OKAY! After all that we can now shape_seeds.push(<Seedobj>)
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // REQUESTS !
 
@@ -117,15 +121,16 @@ async fn main() -> std::result::Result<
             // Parsing body for our Json values
             let found_values: Vec<_> = body.split('"').collect();
             
-            let this_seed = Seedobj {
-                seed: found_values[1].to_string(),
-                v: found_values[3].to_string(),
-                i: found_values[5].to_string()
-            };
-            
             // okay okay I know this looks like garbage but whatever
             // this checks to see if we have the same seed in our json
-            for seed in shape_seeds.into_iter() {
+            for seed in shape_seeds.clone().into_iter() {
+            
+                let this_seed = Seedobj {
+                    seed: found_values[1].to_string(),
+                    v: found_values[3].to_string(),
+                    i: found_values[5].to_string()
+                };
+            
                 if seed.seed == this_seed.seed {
                     continue;
                 } else {
