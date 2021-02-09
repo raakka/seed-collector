@@ -14,7 +14,7 @@ I have yet to test other sites at the moment and pull requests are open
 ## Output
 
 ### Files
-When you run the program it should make a JSON file `json-seed/greenhouse.json`\
+When you run the program it should make a JSON file `json-seed/greenhouse.json`
 
 ### Format
 Each seed should have a JSON obj like this
