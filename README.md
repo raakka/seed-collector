@@ -15,7 +15,6 @@ I have yet to test other sites at the moment and pull requests are very much ope
 
 ### Files
 When you run the program it should make a JSON file `json-seed/greenhouse.json`\
-It should also save each script in a vanilla format in a folder called `/seed-output`
 
 ### Format
 Each seed should have a JSON obj like this
