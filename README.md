@@ -2,7 +2,7 @@
 
 ## What is This?
 This is a Rust program that collects the different variants of shape by pinging an endpoint
-The default for this repo is target but can be easily changes
+The default for this repo is target but can be easily changed
 
 ## Getting Started
 This should be plug and play for target but of course you can modify the script endpoint and it should play nice
