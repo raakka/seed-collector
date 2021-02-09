@@ -43,14 +43,13 @@ async fn main() -> std::result::Result<
     (), /* this kinda hard to read mb */
     Box<dyn std::error::Error + Send + Sync>
     > {
-
-    //  why do you have the habit of checking dotfiles for no reason???
-    dotenv().ok();
-    
+   
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // FILE HANDLING 
 
+    dotenv().ok();
+ 
     // TODO(XVI): Make this a mod this is a mess
     // Checking if we have our JSON output file made...
     let json_seed_file = fs::File::open("seed-json/greenhouse.json");
@@ -66,7 +65,7 @@ async fn main() -> std::result::Result<
         },
     };
     
-    // Does it read?
+    // Does it parse?
     let mut seed_data = fs::read_to_string("seed-json/greenhouse.json")
         .expect("Can't read greenhouse.json");
 
@@ -83,15 +82,15 @@ async fn main() -> std::result::Result<
     // Making an https client
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
+    
+    // Shape seed url, can be like below if u use env vars
     // let target_uri: hyper::Uri = env::var("shape_site_url").unwrap().parse()?;  
     let target_uri: hyper::Uri = "https://assets.targetimg1.com/ssx/ssx.mod.js".parse()?;
         
     // Monitor Loop
     let mut counter: u8 = 0;
     loop{
-        // this is like a c count do I have to explain :/
         counter += 1;
-
         if counter != 254 {
             continue;
         }
@@ -121,7 +120,6 @@ async fn main() -> std::result::Result<
             // Parsing body for our Json values
             let found_values: Vec<_> = body.split('"').collect();
             
-            // okay okay I know this looks like garbage but whatever
             // this checks to see if we have the same seed in our json
             for seed in shape_seeds.clone().into_iter() {
             
@@ -143,11 +141,7 @@ async fn main() -> std::result::Result<
                         .expect("Failed to write to file!");
                 }
             }
-            // JSON body
-            // let json_body: Value = serde_json::from_str(&body)?;
-            // we don't need this beause the body is JS not JSON stupid...
-
-            println!("{:?}", body)
+            println!("{:?}", body);
         }
     }
 } 
